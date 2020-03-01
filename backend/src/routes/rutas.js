@@ -1,16 +1,20 @@
-const express = require("express");
-
-const router = express.Router();
 
 const usuarios = require("../controllers/usuarios");
+const portafolio = require("../controllers/portafolio");
 
-//usuarios
+module.exports = (app) =>{
 
-router.get("/usuarios", usuarios.ver);
-router.get("/usuarios/:id", usuarios.ver_perfil);
-router.post("/usuarios/ingresar", usuarios.ingresar);
-router.post("/usuarios", usuarios.guardar);
-router.post("/usuarios/salir", usuarios.salir);
+    //usuarios
+    app.get("/api/usuarios/ver", usuarios.ver);
+    app.post("/api/usuarios/ingresar", usuarios.ingresar);
+    app.get("/api/usuarios/salir", usuarios.salir);
+    app.get("/api/usuarios/conectado", usuarios.conectado);
+    app.get("/api/usuarios/sesion", usuarios.sesion);
+    app.get("/api/usuarios/asignaturas", usuarios.asignaturas);
+    app.get("/api/usuarios/:id", usuarios.perfil);
+   
+    //portafolio
+    app.post("/api/portafolio/ver", portafolio.ver);
+    app.post("/api/portafolio/activar", portafolio.activar);
 
-
-module.exports = router;
+}

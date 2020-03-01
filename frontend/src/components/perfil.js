@@ -1,23 +1,42 @@
 import React, { Component } from 'react'
 import axios from 'axios';
 
+import config from '../header_session'
+
 export default class perfil extends Component {
 
 
     state = {
 
-        Per_id: 1,
-
-        Per_obj: {}
+        per_obj: {}
 
     }
 
-    async componentDidMount() {
+    async componentWillMount() {
 
-        const respuesta = await axios.get('http://localhost:4000/sisport/api/usuarios/' + this.state.Per_id);
+        const user_id = window.location.pathname.split("/")[2];
 
-        this.setState({ Per_obj: respuesta.data });
+        if (user_id != null) {
 
+            await axios.get('http://localhost:4000/api/usuarios/' + user_id, config[0])
+                .then((response) => {
+
+                    if (response.status === 200) {
+
+                        this.setState({ per_obj: response.data });
+
+                    }
+
+                }).catch((error) => {
+
+                    if (error.response) {
+
+                        console.log(error.response.data);
+                    }
+
+                });
+
+        }
 
     }
 
@@ -48,14 +67,36 @@ export default class perfil extends Component {
                         </div>
 
                         <div className="card-body">
+                            <div className="row ">
+                                <div className="col">
+                                    <h3 className="text-center ">{this.state.per_obj["per_nombres"]} {this.state.per_obj["per_apellidos"]}</h3>
 
-                            <h3 className="text-center">{this.state.Per_obj["per_nombres"]} {this.state.Per_obj["per_apellidos"]}</h3>
-                            <p className="text-left"><strong>Correo:</strong></p>
-                            <p className="text-nowrap text-left">{this.state.Per_obj["per_correo"]}</p>
-                            <p className="text-left"><strong>Tipo de Usuario:</strong></p>
-                            <p className="text-left">{this.state.Per_obj["per_tipo"]}</p>
-                            <p className="text-left"><strong>Titulo</strong></p>
-                            <p className="text-left">{this.state.Per_obj["per_titulo"]}</p>
+                                </div>
+
+                            </div>
+                            <div className="row">
+
+                                <div className="col">
+                                    <p className="text-left"><strong>Correo:</strong></p>
+                                    <p className="text-nowrap text-left">{this.state.per_obj["per_correo"]}</p>
+                                    <p className="text-left"><strong>Tipo de Usuario:</strong></p>
+                                    <p className="text-left">{this.state.per_obj["per_tipo"]}</p>
+                                    <p className="text-left"><strong>Titulo</strong></p>
+                                    <p className="text-left">{this.state.per_obj["per_titulo"]}</p>
+
+                                </div>
+
+                                <div className="col">
+                                    <p className="text-left"><strong>Direccion:</strong></p>
+                                    <p className="text-nowrap text-left">{this.state.per_obj["per_direccion"]}</p>
+                                    <p className="text-left"><strong>Celular:</strong></p>
+                                    <p className="text-left">{this.state.per_obj["per_celular"]}</p>
+                                    <p className="text-left"><strong>Sexo</strong></p>
+                                    <p className="text-left">{this.state.per_obj["per_sexo"]}</p>
+
+                                </div>
+
+                            </div>
 
                         </div>
                     </div>

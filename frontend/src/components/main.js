@@ -1,16 +1,17 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 
 import axios from 'axios';
+
+import config from '../header_session'
+
 
 export default class main extends Component {
 
     state ={
 
-        Per_cedula:'',
-        Per_contraseña: '',
-        Per_token: ''
-
+        per_cedula:'',
+        per_clave: '',
+        conectado: false
     }
 
     onInputChange = (e) => {
@@ -28,18 +29,55 @@ export default class main extends Component {
 
         e.preventDefault();
 
-        const response = await axios.post('http://localhost:4000/sisport/api/usuarios/ingresar', {
-            per_cedula: this.state.Per_cedula,
-            per_contraseña: this.state.Per_contraseña
+        await axios.post('http://localhost:4000/api/usuarios/ingresar', {
+            per_cedula: this.state.per_cedula,
+            per_clave: this.state.per_clave
+
+        },config[0])
+        .then((response)=>{
+            
+            if(response.status === 200){
+
+                window.location.href= "/principal";
+
+            }
+           
+        }).catch((error)=>{
+
+           if(error.response){
+
+                console.log(error.response.data);
+           }
+
         });
-
-        this.setState({Per_token:response.data})
-
-        //window.location.href = "/principal"
 
     }
 
+    async componentWillMount(){
+
+        await axios.get('http://localhost:4000/api/usuarios/conectado',config[0])
+        .then((response)=>{
+            
+            if(response.status === 200){
+
+                window.location.href= "/principal";
+                
+            }
+           
+        }).catch((error)=>{
+
+           if(error.response){
+
+                console.log(error.response.data);
+           }
+
+        });
+
+    }
+
+
     render() {
+
         return (
 
             <div className="row mt-2">
@@ -58,14 +96,13 @@ export default class main extends Component {
                             <h5 className="card-title">Inicio de Sesión</h5>
                             <form onSubmit={this.onSubmit}>
                                 <div className="form-group">
-                                    <input type="text" className="form-control" placeholder="Cédula" name="Per_cedula" onChange={this.onInputChange} value={this.state.Per_cedula}></input>
+                                    <input type="text" className="form-control" placeholder="Cédula" name="per_cedula" onChange={this.onInputChange} value={this.state.per_cedula}></input>
                                 </div>
                                 <div className="form-group">
-                                    <input type="password" className="form-control" placeholder="Contraseña" name="Per_contraseña" onChange={this.onInputChange} value={this.state.Per_contraseña}></input>
+                                    <input type="password" className="form-control" placeholder="Contraseña" name="per_clave" onChange={this.onInputChange} value={this.state.per_clave}></input>
                                 </div>
                                 <div className="form-group">
-                                    <button className="btn btn-primary" type="submit">Ingresar</button>
-                                    <Link className="btn btn-link" to="/">¿Ha olvidado su contraseña?</Link>
+                                    <button className="btn btn-block btn-primary" type="submit">Ingresar</button>
                                 </div>
                             </form>
                         </div>

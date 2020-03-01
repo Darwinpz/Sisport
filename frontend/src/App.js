@@ -11,8 +11,8 @@ import Main from './components/main';
 import Principal from './components/principal';
 import Portafolio from './components/portafolio';
 import Perfil from './components/perfil'
+import Notificaciones from './components/notificaciones';
 
-import Prueba from './components/prueba'
 
 function App() {
   return (
@@ -21,18 +21,19 @@ function App() {
 
       <Navbar />
 
-      <div className="container p-4">
+      <div className="container mt-5 p-5">
 
         <Route path="/" exact component={Main} />
 
         <Route path="/principal" component={Principal} />
-
+        
+        <Route path="/notificaciones" component={Notificaciones} />
+        
         <Route path="/portafolio/:id" component={Portafolio} />
 
-        <Route path="/perfil" component={Perfil} />
+        <Route path="/perfil/:id" component={Perfil} />
 
-        <Route path="/prueba" component={Prueba} />
-
+        
       </div>
 
     </Router>

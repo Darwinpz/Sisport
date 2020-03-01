@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 
-export default class prueba extends Component {
+export default class notificaciones extends Component {
     render() {
         return (
             <div>
-                HOLA
+                Notificaciones
             </div>
         )
     }

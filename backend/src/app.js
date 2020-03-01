@@ -3,9 +3,6 @@ const session = require('express-session');
 const cors = require("cors");
 const morgan = require("morgan");
 const path = require("path");
-
-const routes = require("./routes/rutas");
-
 const RedisStore = require('connect-redis')(session);
 const redis = require('redis');
 
@@ -32,24 +29,25 @@ const app = express();
 app.set('port',process.env.PORT || 4000);
 
 //middlewares
-app.use(cors());
-app.use(express.json());
-app.use(morgan('dev'));
-
 app.use(
     session({
       store: new RedisStore({ client: redisClient }),
       secret: process.env.SECRET_KEY,
       resave: false,
+      saveUninitialized: false
     })
 );
+
+app.use(cors({origin:['http://localhost:4000','http://localhost:3000'],methods:['GET','POST','PUT','DELETE'],credentials:true}))
+app.use(express.urlencoded({extended:true}));
+app.use(express.json());
+app.use(morgan('dev'));
 
 
 require('./database/mongodb');
 
 //rutas
-app.use('/sisport/api',routes);
-
+require("./routes/rutas")(app);
 
 //static files
 app.use(express.static(path.join(__dirname,'public')));
