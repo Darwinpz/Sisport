@@ -1,6 +1,10 @@
 
 const pool = require("../database/postgresql");
 
+const USUARIO = require("../models/usuarios");
+
+const Portafolio = require("../models/portafolio");
+
 const Usuarioctrl = {};
 
 
@@ -21,12 +25,15 @@ Usuarioctrl.ver = async (req, res) => {
 
 }
 
-Usuarioctrl.conectado = (req, res) => {
+Usuarioctrl.conectado = async(req, res) => {
 
 
     if (req.session.per_id != null) {
 
-        res.status(200).json(req.session.per_id);
+        const User = await USUARIO.findOne({per_id:req.session.per_id});
+        
+        
+        res.status(200).json({per_id:req.session.per_id,cargo:User});
 
     } else {
 
@@ -180,15 +187,14 @@ Usuarioctrl.asignaturas = async (req, res) => {
 
             });
 
-            
-
             const list_asignaturas = await pool.query(
-                "SELECT s.sem_nombre,d.asig_id,a.asig_nombre, vi.per_id as docente_id, p.per_titulo||' '||p.per_nombres ||' '|| p.per_apellidos as docente, d.peri_id"
-                +" FROM det_persona_asignaturas as d,asignaturas as a, vi_docentes_asignaturas as vi , persona as p, semestre as s"
+                "SELECT s.sem_nombre,d.asig_id,a.asig_nombre, vi.per_id as docente_id, p.per_titulo||' '||p.per_nombres ||' '|| p.per_apellidos as docente, d.peri_id, per.peri_fecha_inicio, per.peri_fecha_fin"
+                +" FROM det_persona_asignaturas as d,asignaturas as a, vi_docentes_asignaturas as vi , persona as p, semestre as s, periodo as per"
                 +" WHERE d.asig_id = a.asig_id"
                 +" and vi.asig_id = d.asig_id"
                 +" and vi.peri_id = d.peri_id"
                 +" and p.per_id = vi.per_id"
+                +" and per.peri_id = vi.peri_id"
                 +" and a.sem_id = s.sem_id"
                 +" and d.per_id = $1"
                 +" order by d.peri_id", [per_id]);
@@ -196,9 +202,9 @@ Usuarioctrl.asignaturas = async (req, res) => {
 
             if (list_asignaturas.rowCount > 0) {
 
-                list_asignaturas.rows.forEach(asig => {
+                list_asignaturas.rows.forEach((asig) => {
                     
-                    datos.forEach(peri => {
+                    datos.forEach((peri) => {
                 
                         if(peri["peri_id"] == asig["peri_id"]){
                         

@@ -1,4 +1,4 @@
-﻿SELECT s.sem_nombre,d.asig_id,a.asig_nombre, vi.per_id as docente_id, p.per_titulo||' '||p.per_nombres ||' '|| p.per_apellidos as docente, d.peri_id , per.peri_nombre 
+﻿SELECT s.sem_nombre,d.asig_id,a.asig_nombre, vi.per_id as docente_id, p.per_titulo||' '||p.per_nombres ||' '|| p.per_apellidos as docente, d.peri_id , per.peri_nombre, per.peri_fecha_inicio, per.peri_fecha_fin
 FROM det_persona_asignaturas as d,asignaturas as a, vi_docentes_asignaturas as vi , persona as p,semestre as s,periodo as per
 WHERE d.asig_id = a.asig_id 
 	and vi.asig_id = d.asig_id 

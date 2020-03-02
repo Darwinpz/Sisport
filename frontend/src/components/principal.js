@@ -5,12 +5,15 @@ import config from '../header_session'
 
 import { Link } from 'react-router-dom'
 
+import {If} from 'react-if';
+
 export default class principal extends Component {
 
     state = {
 
         datos_asignaturas: [],
-        per_id: ''
+        per_id: '',
+        per_cargo: ''
 
     }
 
@@ -27,9 +30,14 @@ export default class principal extends Component {
 
                     if (asignaturas.status === 200) {
 
-                        this.setState({per_id:conectado.data});
+                        if(conectado.data.cargo !== null){
+                            
+                            this.setState({per_cargo:conectado.data.cargo.per_cargo});
+                            
+                        }
+                        this.setState({per_id:conectado.data.per_id});
                         this.setState({ datos_asignaturas: asignaturas.data });
-
+                        
                     }
 
                 }
@@ -63,16 +71,17 @@ export default class principal extends Component {
             cod_asignatura: asignatura.asig_id,
             cod_presidente : this.state.per_id,
             cod_docente: asignatura.docente_id,
-            cod_periodo: asignatura.peri_id
+            cod_periodo: asignatura.peri_id,
+            peri_fecha_inicio: asignatura.peri_fecha_inicio,
+            peri_fecha_fin: asignatura.peri_fecha_fin
             
         },config[0])
         .then((response)=>{
             
             if(response.status === 200){
 
-                console.log(response);
                 //window.location.href= "/principal";
-                
+
             }
            
         }).catch((error)=>{
@@ -122,7 +131,11 @@ export default class principal extends Component {
                                                 <p className="card-text mb-1"><small className="text-muted">{asignatura.sem_nombre} SEMESTRE</small></p>
                                                 <p className="card-text"><small className="text-muted">-{asignatura.asig_id}-</small></p>
 
-                                                <button type="submit" className="btn btn-success float-right ml-2" onClick={()=>this.activar_portafolio(asignatura)}>Activar</button>
+                                                <If condition={this.state.per_cargo !== '' }>
+                                                    
+                                                    <button type="submit" className="btn btn-success float-right ml-2" onClick={()=>this.activar_portafolio(asignatura)}>Activar</button>
+                                                 
+                                                </If>
                                                 <button type="submit" className="btn btn-primary float-right" >Ver</button>
 
                                             </div>
