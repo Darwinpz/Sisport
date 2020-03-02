@@ -35,12 +35,8 @@ Portafolioctrl.activar = async (req, res) => {
 
         if (req.session.per_id != null) {
 
-            const portafolios = await Portafolio.find({'datos_informativos.cod_asignatura':'IS.P.3.024.903'});
+            const { cod_presidente, cod_docente, cod_periodo, cod_asignatura, peri_fecha_inicio, peri_fecha_fin } = req.body;
 
-            console.log(portafolios);
-/*
-            const { cod_presidente, cod_docente, cod_periodo, cod_asignatura,peri_fecha_inicio,peri_fecha_fin } = req.body;
-            
             const newPortafolio = new Portafolio();
 
             newPortafolio.datos_informativos.cod_asignatura = cod_asignatura;
@@ -53,9 +49,9 @@ Portafolioctrl.activar = async (req, res) => {
             newPortafolio.elementos_curriculares.asistencia = '';
             newPortafolio.elementos_curriculares.expectativas = '';
             newPortafolio.informe_final = '';
-    
+
             var semanas = total_semanas(peri_fecha_inicio, peri_fecha_fin);
-            
+
             const horario = await pool.query("Select *from horarios where asig_id = $1 and peri_id = $2 order by hor_num_dia", [cod_asignatura, cod_periodo]);
 
             const responsables = await pool.query("SELECT p.per_id, p.per_nombres,per_apellidos,per_correo"
@@ -66,11 +62,11 @@ Portafolioctrl.activar = async (req, res) => {
             var num_diario = 0;
 
             var fecha_inicio = new Date(peri_fecha_inicio);
-            
+
             for (let index = 0; index < semanas; index++) {
-                   
+
                 horario.rows.forEach(dia => {
-                    
+
                     json_diario = {
                         "cod_estudiante_resp": "", "num_diario": "", "tiempo": "", "fecha": "", "unidad": "",
                         "tema": "", "problema": "", "contenidos": "", "objetivos": "", "actividades": "", "estrategias": "",
@@ -81,37 +77,37 @@ Portafolioctrl.activar = async (req, res) => {
 
                     var fecha_diario = new Date(fecha_inicio);
 
-                    fecha_diario.setDate(fecha_diario.getDate()+(dia.hor_num_dia-1));
+                    fecha_diario.setDate(fecha_diario.getDate() + (dia.hor_num_dia - 1));
 
-                    var pos_estudiante =  Math.abs(Math.round(Math.random() * ((responsables.rowCount-1) - 0) + 0));
+                    var pos_estudiante = Math.abs(Math.round(Math.random() * ((responsables.rowCount - 1) - 0) + 0));
 
-                    json_diario["cod_estudiante_resp"]= responsables.rows[pos_estudiante].per_id;
+                    json_diario["cod_estudiante_resp"] = responsables.rows[pos_estudiante].per_id;
                     json_diario["num_diario"] = num_diario;
-                    json_diario["tiempo"]= dia.hor_cant_horas;
-                    json_diario["fecha"]= dia.hor_dia+", "+fecha_diario.getDate()+" de "+obtener_mes(fecha_diario.getMonth())+" del "+fecha_diario.getFullYear();
-                    json_diario["unidad"]="";
-                    json_diario["tema"]="";
-                    json_diario["problema"]="";
-                    json_diario["contenidos"]="";
-                    json_diario["objetivos"]="";
-                    json_diario["actividades"]="";
-                    json_diario["estrategias"]="";
-                    json_diario["resumen"]="";
-                    json_diario["reflexion"]="";
-                    json_diario["estrategias"]="";
-                    json_diario["anexos"]="";
-                    json_diario["modificacion"]= Date.now;
-                    
+                    json_diario["tiempo"] = dia.hor_cant_horas;
+                    json_diario["fecha"] = dia.hor_dia + ", " + fecha_diario.getDate() + " de " + obtener_mes(fecha_diario.getMonth()) + " del " + fecha_diario.getFullYear();
+                    json_diario["unidad"] = "";
+                    json_diario["tema"] = "";
+                    json_diario["problema"] = "";
+                    json_diario["contenidos"] = "";
+                    json_diario["objetivos"] = "";
+                    json_diario["actividades"] = "";
+                    json_diario["estrategias"] = "";
+                    json_diario["resumen"] = "";
+                    json_diario["reflexion"] = "";
+                    json_diario["estrategias"] = "";
+                    json_diario["anexos"] = "";
+                    json_diario["modificacion"] = Date.now;
+
                     newPortafolio.elementos_curriculares.apuntes.push(json_diario);
-                    
+
                 });
 
-                fecha_inicio.setDate(fecha_inicio.getDate()+7);
-                
+                fecha_inicio.setDate(fecha_inicio.getDate() + 7);
+
             }
 
             await newPortafolio.save();
-            */
+
             res.status(200).json("Portafolio activado con éxito");
 
         } else {
@@ -129,9 +125,9 @@ Portafolioctrl.activar = async (req, res) => {
 }
 
 
-function obtener_mes(num_mes){
-    
-    var meses = ['Enero','Febero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+function obtener_mes(num_mes) {
+
+    var meses = ['Enero', 'Febero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
     return meses[num_mes];
 

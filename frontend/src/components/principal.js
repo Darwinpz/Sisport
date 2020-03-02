@@ -5,7 +5,7 @@ import config from '../header_session'
 
 import { Link } from 'react-router-dom'
 
-import {If} from 'react-if';
+import { If, Then, Else } from 'react-if';
 
 export default class principal extends Component {
 
@@ -30,14 +30,14 @@ export default class principal extends Component {
 
                     if (asignaturas.status === 200) {
 
-                        if(conectado.data.cargo !== null){
-                            
-                            this.setState({per_cargo:conectado.data.cargo.per_cargo});
-                            
+                        if (conectado.data.cargo !== null) {
+
+                            this.setState({ per_cargo: conectado.data.cargo.per_cargo });
+
                         }
-                        this.setState({per_id:conectado.data.per_id});
+                        this.setState({ per_id: conectado.data.per_id });
                         this.setState({ datos_asignaturas: asignaturas.data });
-                        
+
                     }
 
                 }
@@ -64,34 +64,34 @@ export default class principal extends Component {
     }
 
 
-    activar_portafolio = async(asignatura) =>{
+    activar_portafolio = async (asignatura) => {
 
         await axios.post('http://localhost:4000/api/portafolio/activar', {
 
             cod_asignatura: asignatura.asig_id,
-            cod_presidente : this.state.per_id,
+            cod_presidente: this.state.per_id,
             cod_docente: asignatura.docente_id,
             cod_periodo: asignatura.peri_id,
             peri_fecha_inicio: asignatura.peri_fecha_inicio,
             peri_fecha_fin: asignatura.peri_fecha_fin
-            
-        },config[0])
-        .then((response)=>{
-            
-            if(response.status === 200){
 
-                //window.location.href= "/principal";
+        }, config[0])
+            .then((response) => {
 
-            }
-           
-        }).catch((error)=>{
+                if (response.status === 200) {
 
-           if(error.response){
+                    //window.location.href= "/principal";
 
-                console.log(error.response.data);
-           }
+                }
 
-        });
+            }).catch((error) => {
+
+                if (error.response) {
+
+                    console.log(error.response.data);
+                }
+
+            });
 
     }
 
@@ -104,7 +104,7 @@ export default class principal extends Component {
             <div className="container">
 
                 {
-                    this.state.datos_asignaturas.map((datos,index) => (
+                    this.state.datos_asignaturas.map((datos, index) => (
 
                         <div key={index}>
 
@@ -120,23 +120,34 @@ export default class principal extends Component {
 
                             <div className="row">
 
-                                {datos.asignaturas.map((asignatura,index) => (
+                                {datos.asignaturas.map((asignatura, index) => (
 
                                     <div className="col-md-6 col-lg-4 mb-3" key={index}>
                                         <div className="card " style={{ boxShadow: "0 2px 10px rgba(0,0,0,.075)", borderTop: "4px solid #0ea0ff" }}>
                                             <div className="card-body">
 
                                                 <h5 className="card-title">{asignatura.asig_nombre}</h5>
-                                                <Link className="card-text mb-1" style={{color:"black"}} to={"/perfil/"+asignatura.docente_id} >{asignatura.docente}</Link>
+                                                <Link className="card-text mb-1" style={{ color: "black" }} to={"/perfil/" + asignatura.docente_id} >{asignatura.docente}</Link>
                                                 <p className="card-text mb-1"><small className="text-muted">{asignatura.sem_nombre} SEMESTRE</small></p>
                                                 <p className="card-text"><small className="text-muted">-{asignatura.asig_id}-</small></p>
 
-                                                <If condition={this.state.per_cargo !== '' }>
-                                                    
-                                                    <button type="submit" className="btn btn-success float-right ml-2" onClick={()=>this.activar_portafolio(asignatura)}>Activar</button>
-                                                 
+                                                <If condition={asignatura.activo}>
+
+                                                    <Then>
+
+                                                        <button type="submit" className="btn btn-primary float-right" >Ver Portafolio</button>
+
+                                                    </Then>
+
+                                                    <Else>
+                                                        <If condition={this.state.per_cargo !== ''}>
+
+                                                            <button type="submit" className="btn btn-success float-right ml-2" onClick={() => this.activar_portafolio(asignatura)}>Activar Portafolio</button>
+
+                                                        </If>
+                                                    </Else>
+
                                                 </If>
-                                                <button type="submit" className="btn btn-primary float-right" >Ver</button>
 
                                             </div>
                                         </div>

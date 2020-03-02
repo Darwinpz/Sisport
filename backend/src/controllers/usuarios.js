@@ -202,19 +202,33 @@ Usuarioctrl.asignaturas = async (req, res) => {
 
             if (list_asignaturas.rowCount > 0) {
 
-                list_asignaturas.rows.forEach((asig) => {
-                    
-                    datos.forEach((peri) => {
-                
+                for (const asig of list_asignaturas.rows){
+
+                    var asig_aux ;
+
+                    for (const peri of datos){
+
                         if(peri["peri_id"] == asig["peri_id"]){
                         
-                            peri["asignaturas"].push(asig);
+                            const portafolios = await Portafolio.find({'datos_informativos.cod_asignatura':asig["asig_id"],'datos_informativos.cod_periodo':asig["peri_id"]});
+                            
+                            if(portafolios.length > 0)
+                            {
+                                asig_aux = Object.assign({}, asig, {"activo":true})
+
+                            }else{
+
+                                asig_aux = Object.assign({}, asig, {"activo":false})
+
+                            }
+                            
+                            peri["asignaturas"].push(asig_aux);
 
                         }
 
-                    });
+                    }
 
-                });
+                }
 
 
                 res.status(200).json(datos);
@@ -238,5 +252,6 @@ Usuarioctrl.asignaturas = async (req, res) => {
     }
 
 }
+
 
 module.exports = Usuarioctrl;
