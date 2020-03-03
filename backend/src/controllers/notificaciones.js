@@ -55,10 +55,17 @@ Notificacionesctrl.guardar_notificacion = async (req, res) => {
 
 Notificacionesctrl.ver_notificaciones = async (req, res) => {
 
-
     if (req.session.per_id != null) {
 
         const notificaciones = await Notificaciones.find({ per_id: req.session.per_id });
+
+        for (const notificacion of notificaciones) {
+            
+            const emisor = await pool.query("SELECT per_nombres ||' '||per_apellidos as nombre from Persona where per_id=$1", [notificacion.emisor]);
+
+            notificacion.emisor = emisor.rows[0].nombre;
+
+        }
 
         res.status(200).json(notificaciones);
 

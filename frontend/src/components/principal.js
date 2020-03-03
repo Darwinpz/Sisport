@@ -57,21 +57,23 @@ export default class principal extends Component {
 
                                             asig["activo"] = true;
 
-                                            
-                                            var button = document.createElement('button');
-                                            button.type = "submit"
-                                            button.className = "btn btn-primary float-right";
-                                            button.innerText = "Ver Portafolio";
-
                                             const asig_id = asig['asig_id'];
                                             const peri_id = asig['peri_id'];
 
-                                            document.getElementsByClassName(asig_id+"-"+peri_id)[0].children[0].append(button);
+                                            var button = document.createElement('a');
+                                            button.className = "btn btn-primary float-right";
+                                            button.innerText = "Ver Portafolio";
+                                            button.href = "/portafolio/"+asig_id+"-"+peri_id;
 
+                                            if(document.getElementsByClassName(asig_id+"-"+peri_id)[0] !== undefined){
+
+                                                document.getElementsByClassName(asig_id+"-"+peri_id)[0].children[0].append(button);
+
+                                            }
+                                            
                                             var num = parseInt(document.getElementsByClassName("notificacion")[0].innerText);
 
                                             document.getElementsByClassName("notificacion")[0].innerText = (num + 1);
-                                            
                                             
                                             
                                         }
@@ -165,11 +167,10 @@ export default class principal extends Component {
 
                     });
 
-                    this.guardar_notificacion("PORTAFOLIO DE "+asignatura.asig_nombre +" ESTÁ HABILITADO",asignatura.asig_id,asignatura.peri_id);
+                    this.guardar_notificacion("EL PORTAFOLIO DE "+asignatura.asig_nombre +" ESTÁ HABILITADO",asignatura.asig_id,asignatura.peri_id);
 
-                   // window.location.href= "/portafolio";
-
-
+                    window.location.href= "/portafolio/"+asignatura.asig_id+"-"+asignatura.peri_id;
+                   
                 }
 
             }).catch((error) => {
@@ -185,8 +186,6 @@ export default class principal extends Component {
 
 
     render() {
-
-
         return (
 
             <div className="container">
@@ -223,7 +222,7 @@ export default class principal extends Component {
 
                                                     <Then>
 
-                                                        <button type="submit" className="btn btn-primary float-right " >Ver Portafolio</button>
+                                                        <Link  className="btn btn-primary float-right " to={"/portafolio/"+asignatura.asig_id+"-"+asignatura.peri_id} >Ver Portafolio</Link>
 
                                                     </Then>
 

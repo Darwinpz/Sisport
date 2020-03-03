@@ -1,9 +1,35 @@
 import React, { Component } from 'react'
 
+import axios from 'axios';
+
+import config from '../header_session'
+
 export default class notificaciones extends Component {
+
+    state = {
+
+        notificaciones: []
+    }
 
     async componentWillMount(){
         
+        await axios.get('http://192.168.50.124:4000/api/notificaciones/ver', config[0])
+            .then((response) => {
+
+                if (response.status === 200) {
+
+                    this.setState({ notificaciones: response.data });
+
+                }
+
+            }).catch((error) => {
+
+                if (error.response) {
+
+                    console.log(error.response.data);
+                }
+
+            });
     }
 
     render() {
@@ -23,16 +49,21 @@ export default class notificaciones extends Component {
 
                     <div className="col">
 
-                        <div className="card mt-2">
+                    { this.state.notificaciones.map((notificacion,index)=>(
+                    
+                        <div className="card mt-2" key={index} >
 
                             <div className="card-header">
-                                <strong>Darwin Pilaloa</strong> - 02/03/2020
+                                <strong>{notificacion.emisor}</strong> - {notificacion.timestamp}
                             </div>
                             <div className="card-body">
-                                Portafolio ... Habilitado
+                                {notificacion.actividad}
                             </div>
 
                         </div>
+                        ))
+
+                    }
 
                     </div>
 

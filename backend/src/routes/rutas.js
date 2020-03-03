@@ -2,6 +2,7 @@
 const usuarios = require("../controllers/usuarios");
 const portafolio = require("../controllers/portafolio");
 const notificaciones = require("../controllers/notificaciones");
+const multer = require("../libs/multer");
 
 module.exports = (app) =>{
 
@@ -18,10 +19,14 @@ module.exports = (app) =>{
     app.post("/api/portafolio/ver", portafolio.ver);
     app.post("/api/portafolio/activar", portafolio.activar);
 
+    app.post("/api/portafolio/subir_documento",multer.single("file"),portafolio.subir_documento);
+
+
     //Notificaciones
 
     app.get("/api/notificaciones/ver", notificaciones.ver_notificaciones);
     app.post("/api/notificaciones/guardar", notificaciones.guardar_notificacion);
 
+    
 
 }

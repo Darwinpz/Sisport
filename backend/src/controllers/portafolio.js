@@ -3,6 +3,10 @@ const Portafolio = require("../models/portafolio");
 
 const pool = require("../database/postgresql");
 
+const path = require("path");
+
+const fs = require('fs-extra');
+
 const Portafolioctrl = {};
 
 Portafolioctrl.ver = async (req, res) => {
@@ -11,6 +15,16 @@ Portafolioctrl.ver = async (req, res) => {
 
         if (req.session.per_id != null) {
 
+            const { cod_periodo, cod_asignatura} = req.body;
+
+            const responsables = await pool.query("SELECT p.per_id, p.per_nombres,per_apellidos,per_correo"
+                + " FROM persona as p,det_persona_asignaturas as d"
+                + " where p.per_id = d.per_id and asig_id = $1 and peri_id = $2 and p.per_tipo = 'Estudiante'", [cod_asignatura, cod_periodo]);
+
+            const portafolio = await Portafolio.find({'datos_informativos.cod_asignatura':cod_asignatura,'datos_informativos.cod_periodo':cod_periodo});
+                       
+
+            res.status(200).json({responsables:responsables.rows,portafolio:portafolio});
 
 
         } else {
@@ -106,6 +120,44 @@ Portafolioctrl.activar = async (req, res) => {
 
             await newPortafolio.save();
 
+            const directorio = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo);
+            const datos_informativos = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/datos_informativos");
+            const elementos_curriculares = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares");
+            const syllabus = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/syllabus");
+            const expectativas = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/expectativas");
+            const asistencia = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/asistencia");
+            const apuntes = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/apuntes");
+            const evaluaciones = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/evaluaciones");
+            const investigaciones = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/investigaciones");
+            const practicas_lab = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/practicas_lab");
+            const proyectos = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/proyectos");
+            const casos_estudio = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/casos_estudio");
+            const problemas = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/problemas");
+            const talleres = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/talleres");
+            const autonomos = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/autonomos");
+            const refuerzo = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/elementos_curriculares/refuerzo");
+            const informe_final = path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/informe_final");
+
+            if (!fs.existsSync(directorio)) {
+                await fs.mkdir(directorio);
+                await fs.mkdir(datos_informativos);
+                await fs.mkdir(elementos_curriculares);
+                await fs.mkdir(syllabus);
+                await fs.mkdir(expectativas);
+                await fs.mkdir(asistencia);
+                await fs.mkdir(apuntes);
+                await fs.mkdir(evaluaciones);
+                await fs.mkdir(investigaciones);
+                await fs.mkdir(practicas_lab);
+                await fs.mkdir(proyectos);
+                await fs.mkdir(casos_estudio);
+                await fs.mkdir(problemas);
+                await fs.mkdir(talleres);
+                await fs.mkdir(autonomos);
+                await fs.mkdir(refuerzo);
+                await fs.mkdir(informe_final);
+            }
+
             res.status(200).json("Portafolio activado con éxito");
 
         } else {
@@ -139,5 +191,43 @@ function total_semanas(fecha_inicio, fecha_fin) {
 
     return Math.round(cant_dias / (1000 * 60 * 60 * 24 * 7));
 }
+
+
+Portafolioctrl.guardar_diario = async (req, res) => {
+
+
+
+}
+
+Portafolioctrl.subir_documento = async (req, res) => {
+
+    try {
+
+        if (req.session.per_id != null) {
+
+            const {ruta_documento,cod_asignatura,cod_periodo} = req.body;
+
+            const link_archivo = (req.files[0].filename);
+            
+            await fs.rename(req.files[0].path, path.resolve("src/public/"+cod_asignatura+"-"+cod_periodo+"/"+ ruta_documento+"/"+link_archivo));
+            
+            res.status(200).json("Documento subido con éxito");
+
+        } else {
+
+            res.status(403).json("No tienes un usuario actualmente activo");
+
+        }
+
+    } catch (e) {
+
+        await fs.unlink(req.files[0].path);
+
+        res.status(500).json(e);
+
+    }
+}
+
+
 
 module.exports = Portafolioctrl;
