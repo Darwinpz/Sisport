@@ -29,7 +29,7 @@ export default class main extends Component {
 
         e.preventDefault();
 
-        await axios.post('http://192.168.50.124:4000/api/usuarios/ingresar', {
+        await axios.post('http://172.31.44.79:4000/api/usuarios/ingresar', {
             per_cedula: this.state.per_cedula,
             per_clave: this.state.per_clave
 
@@ -55,7 +55,7 @@ export default class main extends Component {
 
     async componentWillMount(){
 
-        await axios.get('http://192.168.50.124:4000/api/usuarios/conectado',config[0])
+        await axios.get('http://172.31.44.79:4000/api/usuarios/conectado',config[0])
         .then((response)=>{
             
             if(response.status === 200){

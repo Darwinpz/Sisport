@@ -13,7 +13,7 @@ export default class notificaciones extends Component {
 
     async componentWillMount(){
         
-        await axios.get('http://192.168.50.124:4000/api/notificaciones/ver', config[0])
+        await axios.get('http://172.31.44.79:4000/api/notificaciones/ver', config[0])
             .then((response) => {
 
                 if (response.status === 200) {

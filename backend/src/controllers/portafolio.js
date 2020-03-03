@@ -22,7 +22,24 @@ Portafolioctrl.ver = async (req, res) => {
                 + " where p.per_id = d.per_id and asig_id = $1 and peri_id = $2 and p.per_tipo = 'Estudiante'", [cod_asignatura, cod_periodo]);
 
             const portafolio = await Portafolio.find({'datos_informativos.cod_asignatura':cod_asignatura,'datos_informativos.cod_periodo':cod_periodo});
-                       
+
+            for (const port of portafolio) {
+
+                for (const apunte of port.elementos_curriculares.apuntes) {
+
+                    for (const responsable of responsables.rows) {
+                        
+                        if(responsable.per_id == apunte.cod_estudiante_resp){
+
+                            responsable["num_diarios"] += ","+apunte.num_diario;
+                           
+                        }
+
+                    }
+                    
+                }
+               
+            }
 
             res.status(200).json({responsables:responsables.rows,portafolio:portafolio});
 
@@ -156,8 +173,10 @@ Portafolioctrl.activar = async (req, res) => {
                 await fs.mkdir(autonomos);
                 await fs.mkdir(refuerzo);
                 await fs.mkdir(informe_final);
-            }
 
+                
+            }
+            
             res.status(200).json("Portafolio activado con éxito");
 
         } else {
