@@ -1,8 +1,6 @@
 
 const Portafolio = require("../models/portafolio");
 
-const USUARIO = require("../models/usuarios");
-
 const pool = require("../database/postgresql");
 
 const Portafolioctrl = {};

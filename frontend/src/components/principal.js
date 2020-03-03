@@ -7,10 +7,15 @@ import { Link } from 'react-router-dom'
 
 import { If, Then, Else } from 'react-if';
 
+import socketIOClient from 'socket.io-client';
+
+var socket;
+
 export default class principal extends Component {
 
     state = {
 
+        server: "http://192.168.50.124:4000",
         datos_asignaturas: [],
         per_id: '',
         per_cargo: ''
@@ -38,6 +43,48 @@ export default class principal extends Component {
                         this.setState({ per_id: conectado.data.per_id });
                         this.setState({ datos_asignaturas: asignaturas.data });
 
+                        socket = socketIOClient(this.state.server);
+
+                        socket.on("activar_diario", data => {
+
+                            this.state.datos_asignaturas.forEach(datos => {
+
+                                if (datos["peri_id"] === data.cod_periodo) {
+
+                                    datos.asignaturas.forEach(asig => {
+
+                                        if (asig["asig_id"] === data.cod_asignatura) {
+
+                                            asig["activo"] = true;
+
+                                            
+                                            var button = document.createElement('button');
+                                            button.type = "submit"
+                                            button.className = "btn btn-primary float-right";
+                                            button.innerText = "Ver Portafolio";
+
+                                            const asig_id = asig['asig_id'];
+                                            const peri_id = asig['peri_id'];
+
+                                            document.getElementsByClassName(asig_id+"-"+peri_id)[0].children[0].append(button);
+
+                                            var num = parseInt(document.getElementsByClassName("notificacion")[0].innerText);
+
+                                            document.getElementsByClassName("notificacion")[0].innerText = (num + 1);
+                                            
+                                            
+                                            
+                                        }
+
+                                    });
+
+                                }
+
+                            });
+
+                        });
+
+
                     }
 
                 }
@@ -48,25 +95,54 @@ export default class principal extends Component {
 
             });
 
-
     }
 
     getAsignaturas = async () => {
 
-        return await axios.get('http://localhost:4000/api/usuarios/asignaturas', config[0]);
+        return await axios.get('http://192.168.50.124:4000/api/usuarios/asignaturas', config[0]);
 
     }
 
     getsesion = async () => {
 
-        return await axios.get('http://localhost:4000/api/usuarios/conectado', config[0]);
+        return await axios.get('http://192.168.50.124:4000/api/usuarios/conectado', config[0]);
+
+    }
+
+    guardar_notificacion = async(actividad,cod_asignatura,cod_periodo) =>{
+
+        await axios.post('http://192.168.50.124:4000/api/notificaciones/guardar', {
+
+            actividad: actividad,
+            emisor: this.state.per_id,
+            cod_asignatura:cod_asignatura,
+            cod_periodo:cod_periodo
+
+        }, config[0])
+            .then((response) => {
+
+                if (response.status === 200) {
+                    
+                    console.log(response);
+                    
+                }
+
+            }).catch((error) => {
+
+                if (error.response) {
+
+                    console.log(error.response.data);
+                }
+
+            });
+
 
     }
 
 
     activar_portafolio = async (asignatura) => {
 
-        await axios.post('http://localhost:4000/api/portafolio/activar', {
+        await axios.post('http://192.168.50.124:4000/api/portafolio/activar', {
 
             cod_asignatura: asignatura.asig_id,
             cod_presidente: this.state.per_id,
@@ -80,7 +156,19 @@ export default class principal extends Component {
 
                 if (response.status === 200) {
 
-                    //window.location.href= "/principal";
+                    
+                    socket.emit("activar_diario", {
+
+                        cod_asignatura: asignatura.asig_id,
+                        cod_periodo: asignatura.peri_id,
+                        cod_presidente: this.state.per_id,
+
+                    });
+
+                    this.guardar_notificacion("PORTAFOLIO DE "+asignatura.asig_nombre +" ESTÁ HABILITADO",asignatura.asig_id,asignatura.peri_id);
+
+                   // window.location.href= "/portafolio";
+
 
                 }
 
@@ -123,7 +211,7 @@ export default class principal extends Component {
                                 {datos.asignaturas.map((asignatura, index) => (
 
                                     <div className="col-md-6 col-lg-4 mb-3" key={index}>
-                                        <div className="card " style={{ boxShadow: "0 2px 10px rgba(0,0,0,.075)", borderTop: "4px solid #0ea0ff" }}>
+                                        <div className={"card "+asignatura.asig_id + "-" + asignatura.peri_id} style={{ boxShadow: "0 2px 10px rgba(0,0,0,.075)", borderTop: "4px solid #0ea0ff" }} >
                                             <div className="card-body">
 
                                                 <h5 className="card-title">{asignatura.asig_nombre}</h5>
@@ -135,11 +223,12 @@ export default class principal extends Component {
 
                                                     <Then>
 
-                                                        <button type="submit" className="btn btn-primary float-right" >Ver Portafolio</button>
+                                                        <button type="submit" className="btn btn-primary float-right " >Ver Portafolio</button>
 
                                                     </Then>
 
                                                     <Else>
+
                                                         <If condition={this.state.per_cargo !== ''}>
 
                                                             <button type="submit" className="btn btn-success float-right ml-2" onClick={() => this.activar_portafolio(asignatura)}>Activar Portafolio</button>

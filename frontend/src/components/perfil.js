@@ -18,7 +18,7 @@ export default class perfil extends Component {
 
         if (user_id != null) {
 
-            await axios.get('http://localhost:4000/api/usuarios/' + user_id, config[0])
+            await axios.get('http://192.168.50.124:4000/api/usuarios/' + user_id, config[0])
                 .then((response) => {
 
                     if (response.status === 200) {

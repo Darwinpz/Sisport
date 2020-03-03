@@ -29,7 +29,7 @@ function App() {
         
         <Route path="/notificaciones" component={Notificaciones} />
         
-        <Route path="/portafolio/:id" component={Portafolio} />
+        <Route path="/portafolio" component={Portafolio} />
 
         <Route path="/perfil/:id" component={Perfil} />
 

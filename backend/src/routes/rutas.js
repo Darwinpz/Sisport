@@ -1,6 +1,7 @@
 
 const usuarios = require("../controllers/usuarios");
 const portafolio = require("../controllers/portafolio");
+const notificaciones = require("../controllers/notificaciones");
 
 module.exports = (app) =>{
 
@@ -16,5 +17,11 @@ module.exports = (app) =>{
     //portafolio
     app.post("/api/portafolio/ver", portafolio.ver);
     app.post("/api/portafolio/activar", portafolio.activar);
+
+    //Notificaciones
+
+    app.get("/api/notificaciones/ver", notificaciones.ver_notificaciones);
+    app.post("/api/notificaciones/guardar", notificaciones.guardar_notificacion);
+
 
 }

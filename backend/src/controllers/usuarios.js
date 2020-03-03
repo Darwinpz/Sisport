@@ -1,7 +1,7 @@
 
 const pool = require("../database/postgresql");
 
-const USUARIO = require("../models/usuarios");
+const PERMISOS = require("../models/Permisos");
 
 const Portafolio = require("../models/portafolio");
 
@@ -30,10 +30,10 @@ Usuarioctrl.conectado = async(req, res) => {
 
     if (req.session.per_id != null) {
 
-        const User = await USUARIO.findOne({per_id:req.session.per_id});
+        const permisos_user = await PERMISOS.findOne({per_id:req.session.per_id});
         
         
-        res.status(200).json({per_id:req.session.per_id,cargo:User});
+        res.status(200).json({per_id:req.session.per_id,cargo:permisos_user});
 
     } else {
 

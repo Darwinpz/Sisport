@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const UserSchema = new Schema(
+const PermisosSchema = new Schema(
 {
    
     per_id: {type:String, required:true},
@@ -11,4 +11,4 @@ const UserSchema = new Schema(
 });
 
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('permisos', PermisosSchema);
