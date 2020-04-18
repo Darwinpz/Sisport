@@ -38,7 +38,7 @@ app.use(
     })
 );
 
-app.use(cors({origin:['http://172.31.44.79:4000','http://172.31.44.79:3000'],methods:['GET','POST','PUT','DELETE'],credentials:true}))
+app.use(cors({origin:['http://localhost:4000','http://localhost:3000'],methods:['GET','POST','PUT','DELETE'],credentials:true}))
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.use(morgan('dev'));

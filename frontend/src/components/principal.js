@@ -15,7 +15,7 @@ export default class principal extends Component {
 
     state = {
 
-        server: "http://172.31.44.79:4000",
+        server: "http://localhost:4000",
         datos_asignaturas: [],
         per_id: '',
         per_cargo: ''
@@ -101,19 +101,19 @@ export default class principal extends Component {
 
     getAsignaturas = async () => {
 
-        return await axios.get('http://172.31.44.79:4000/api/usuarios/asignaturas', config[0]);
+        return await axios.get('http://localhost:4000/api/usuarios/asignaturas', config[0]);
 
     }
 
     getsesion = async () => {
 
-        return await axios.get('http://172.31.44.79:4000/api/usuarios/conectado', config[0]);
+        return await axios.get('http://localhost:4000/api/usuarios/conectado', config[0]);
 
     }
 
     guardar_notificacion = async(actividad,cod_asignatura,cod_periodo) =>{
 
-        await axios.post('http://172.31.44.79:4000/api/notificaciones/guardar', {
+        await axios.post('http://localhost:4000/api/notificaciones/guardar', {
 
             actividad: actividad,
             emisor: this.state.per_id,
@@ -144,7 +144,7 @@ export default class principal extends Component {
 
     activar_portafolio = async (asignatura) => {
 
-        await axios.post('http://172.31.44.79:4000/api/portafolio/activar', {
+        await axios.post('http://localhost:4000/api/portafolio/activar', {
 
             cod_asignatura: asignatura.asig_id,
             cod_presidente: this.state.per_id,

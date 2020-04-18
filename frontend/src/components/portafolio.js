@@ -54,7 +54,7 @@ export default class portafolio extends Component {
 
     getPortafolio = async () => {
 
-        return await axios.post('http://172.31.44.79:4000/api/portafolio/ver', {
+        return await axios.post('http://localhost:4000/api/portafolio/ver', {
 
             cod_asignatura: window.location.pathname.split("/")[2].split("-")[0],
             cod_periodo: window.location.pathname.split("/")[2].split("-")[1],
@@ -65,7 +65,7 @@ export default class portafolio extends Component {
 
     getsesion = async () => {
 
-        return await axios.get('http://172.31.44.79:4000/api/usuarios/conectado', config[0]);
+        return await axios.get('http://localhost:4000/api/usuarios/conectado', config[0]);
 
     }
 

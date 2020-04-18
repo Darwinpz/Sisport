@@ -20,7 +20,7 @@ export default class navbar extends Component {
 
     async componentWillMount() {
 
-        await axios.get('http://172.31.44.79:4000/api/usuarios/sesion', config[0])
+        await axios.get('http://localhost:4000/api/usuarios/sesion', config[0])
             .then((response) => {
 
                 if (response.status === 200) {
@@ -43,7 +43,7 @@ export default class navbar extends Component {
 
     salir = async()=>{
         
-        await axios.get('http://172.31.44.79:4000/api/usuarios/salir', config[0])
+        await axios.get('http://localhost:4000/api/usuarios/salir', config[0])
         .then((response) => {
 
             if (response.status === 200) {
